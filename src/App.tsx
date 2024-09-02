@@ -1,12 +1,8 @@
 import { AuthProvider } from "./context/AuthContext";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./components/Login";
 import User from "./components/User";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import "./App.css";
 
@@ -17,8 +13,9 @@ function App() {
         <Router>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/user" element={<User />} />
-            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route element={<ProtectedRoute requiredRole="ADMIN" />}>
+              <Route path="/dashboard" element={<User />} />
+            </Route>
           </Routes>
         </Router>
       </AuthProvider>

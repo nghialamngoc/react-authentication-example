@@ -10,9 +10,11 @@ import { getUser, loginApi, refreshTokenApi } from "../api/auth";
 
 interface AuthContextType {
   user: any;
+  isLoading: boolean;
+  hasRole: (role: string) => boolean;
+  can: (permission: string) => boolean;
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
-  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -67,8 +69,18 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     setUser(null);
   };
 
+  const hasRole = (role: string) => {
+    return user && user.roles && user.roles.includes(role);
+  };
+
+  const can = (permission: string) => {
+    return user && user.permissions && user.permissions.includes(permission);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider
+      value={{ user, login, logout, isLoading, hasRole, can }}
+    >
       {children}
     </AuthContext.Provider>
   );
