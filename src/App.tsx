@@ -1,26 +1,13 @@
-import { AuthProvider } from "./context/AuthContext";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Login from "./components/Login";
-import User from "./components/User";
-import ProtectedRoute from "./components/ProtectedRoute";
-
-import "./App.css";
+import { GoogleOAuthProvider } from '@react-oauth/google'
+import { AppRoutes } from './routes'
+import { envConfig } from './config/envConfig'
 
 function App() {
   return (
-    <div className="App">
-      <AuthProvider>
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route element={<ProtectedRoute requiredRole="ADMIN" />}>
-              <Route path="/dashboard" element={<User />} />
-            </Route>
-          </Routes>
-        </Router>
-      </AuthProvider>
-    </div>
-  );
+    <GoogleOAuthProvider clientId={envConfig.googleClientId}>
+      <AppRoutes />
+    </GoogleOAuthProvider>
+  )
 }
 
-export default App;
+export default App

@@ -1,95 +1,51 @@
-import React, {
-  createContext,
-  useState,
-  useContext,
-  useEffect,
-  PropsWithChildren,
-} from "react";
-import axios from "axios";
-import { getUser, loginApi, refreshTokenApi } from "../api/auth";
+import { createContext, useState, useEffect, ReactNode } from 'react'
+import { User } from '@/types'
+import { getUser } from '@/services/authService'
 
 interface AuthContextType {
-  user: any;
-  isLoading: boolean;
-  hasRole: (role: string) => boolean;
-  can: (permission: string) => boolean;
-  login: (username: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  user: User | null
+  login: (accessToken: string, user: User) => void
+  logout: () => void
+  isAdmin: boolean
+  loading: boolean
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const [user, setUser] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const initAuth = async () => {
-      const accessToken = localStorage.getItem("accessToken");
-      if (accessToken) {
-        try {
-          const userData = await getUser();
-          setUser(userData);
-        } catch (error) {
-          // Token invalid, clear storage
+    const fetch = async () => {
+      try {
+        const { success, data } = await getUser()
 
-          console.error("Error initializing auth:", error);
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
+        if (success) {
+          setUser(data)
         }
+      } catch (err) {
+      } finally {
+        setLoading(false)
       }
-      setIsLoading(false);
-    };
-
-    initAuth();
-  }, []);
-
-  const login = async (username: string, password: string) => {
-    setIsLoading(true);
-    try {
-      const { accessToken, refreshToken } = await loginApi(username, password);
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      setUser({
-        username,
-      });
-
-      return true;
-    } catch (error) {
-      console.error("Login error:", error);
-      return false;
-    } finally {
-      setIsLoading(false);
     }
-  };
+
+    fetch()
+  }, [])
+
+  const login = (token: string, user: User) => {
+    setUser(user)
+    localStorage.setItem('accessToken', token)
+    localStorage.setItem('user', JSON.stringify(user))
+  }
 
   const logout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    setUser(null);
-  };
-
-  const hasRole = (role: string) => {
-    return user && user.roles && user.roles.includes(role);
-  };
-
-  const can = (permission: string) => {
-    return user && user.permissions && user.permissions.includes(permission);
-  };
-
-  return (
-    <AuthContext.Provider
-      value={{ user, login, logout, isLoading, hasRole, can }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    setUser(null)
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('user')
   }
-  return context;
-};
+
+  const isAdmin = user?.roles.includes('admin') || false
+
+  return <AuthContext.Provider value={{ user, login, logout, isAdmin, loading }}>{children}</AuthContext.Provider>
+}
