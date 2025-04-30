@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 export const OneTapLogin = () => {
-  const { login: authLogin } = useAuth()
+  const { login: authLogin, user } = useAuth()
   const navigate = useNavigate()
 
   const buttonRef = useRef<HTMLDivElement>(null)
@@ -37,6 +37,11 @@ export const OneTapLogin = () => {
     }
     init()
   }, [])
+
+  useEffect(() => {
+    const w = window as any
+    w?.google?.accounts?.id?.cancel?.()
+  }, [user])
 
   const handleCredentialResponse = async (credentialResponse: any) => {
     const idToken = credentialResponse.credential

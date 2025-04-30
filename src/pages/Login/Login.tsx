@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { GoogleLogin } from '@react-oauth/google'
+import { useGoogleLogin } from '@react-oauth/google'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -8,6 +8,8 @@ import { login, googleLogin } from '@/services/authService'
 import { useAuth } from '@/hooks/useAuth'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
+import IconGoogle from '@/components/icons/IconGoogle'
+import IconFB from '@/components/icons/IconFB'
 
 // Validation schema với Yup
 const LoginSchema = Yup.object().shape({
@@ -44,20 +46,65 @@ export const Login = () => {
     }
   }
 
-  // Xử lý đăng nhập Google
-  const handleGoogleSuccess = async (credentialResponse: any) => {
-    const idToken = credentialResponse.credential
+  const googleLoginHook = useGoogleLogin({
+    onSuccess: async credentialResponse => {
+      const accessToken = credentialResponse.access_token // Lấy access_token
 
-    try {
-      const response = await googleLogin(idToken)
-      if (response.success) {
-        authLogin(response.data.accessToken, response.data.user)
-        navigate('/dashboard')
-      } else {
-        setError(response.message || 'Google login failed')
+      if (!accessToken) {
+        setError('No access token returned from Google')
+        return
       }
+
+      try {
+        const response = await googleLogin(accessToken)
+        if (response.success) {
+          authLogin(response.data.accessToken, response.data.user)
+          navigate('/dashboard')
+        } else {
+          setError(response.message || 'Google login failed')
+        }
+      } catch (err) {
+        console.error('Google login error:', err)
+        setError('Failed to login with Google')
+      }
+    },
+    onError: error => {
+      console.error('Google login error:', error)
+      setError('Google login failed')
+    },
+    flow: 'implicit', // Sử dụng implicit flow để lấy access_token
+    scope: 'email profile', // Quyền cần thiết để lấy thông tin người dùng
+  })
+
+  const handleFacebookLogin = async () => {
+    try {
+      const fbResponse = await new Promise<any>((resolve, reject) => {
+        ;(window as any).FB.login(
+          (response: any) => {
+            if (response.authResponse) {
+              resolve(response)
+            } else {
+              reject(new Error('Facebook login failed'))
+            }
+          },
+          { scope: 'public_profile,email' },
+        )
+      })
+
+      const accessToken = fbResponse.authResponse.accessToken
+
+      console.log('accessToken', accessToken)
+
+      // const response = await facebookLogin(accessToken);
+      // if (response.success) {
+      //   authLogin(response.data.accessToken, response.data.user);
+      //   navigate('/dashboard');
+      // } else {
+      //   setError(response.message || 'Facebook login failed');
+      // }
     } catch (err) {
-      setError('Failed to login with Google')
+      console.error('Facebook login error:', err)
+      setError('Failed to login with Facebook')
     }
   }
 
@@ -80,18 +127,21 @@ export const Login = () => {
                   <Field as={Input} type="password" name="password" placeholder="Password" className="w-full" />
                   <ErrorMessage name="password" component="p" className="text-red-500 text-sm mt-1" />
                 </div>
-                <Button type="submit" disabled={isSubmitting} className="w-full">
+                <Button type="submit" disabled={isSubmitting} className="w-full cursor-pointer">
                   {isSubmitting ? 'Logging in...' : 'Login'}
                 </Button>
               </Form>
             )}
           </Formik>
-          <div className="mt-4 flex justify-center">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={() => setError('Google login failed')}
-              text="signin_with"
-            />
+          <div className="mt-4 flex justify-center gap-8">
+            {/* Google Login với biểu tượng */}
+            <div className="cursor-pointer" onClick={() => googleLoginHook()}>
+              <IconGoogle />
+            </div>
+
+            <div className="cursor-pointer" onClick={() => handleFacebookLogin()}>
+              <IconFB />
+            </div>
           </div>
         </CardContent>
       </Card>

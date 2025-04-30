@@ -33,6 +33,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     fetch()
   }, [])
 
+  useEffect(() => {
+    ;(window as any).fbAsyncInit = function () {
+      ;(window as any).FB.init({
+        appId: '1299738751125160', // Thay bằng App ID của bạn
+        cookie: true,
+        xfbml: true,
+        version: 'v20.0',
+      })
+    }
+
+    // Load Facebook SDK
+    ;(function (d, s, id) {
+      const fjs = d.getElementsByTagName(s)[0]
+      if (d.getElementById(id)) return
+      const js = d.createElement(s) as HTMLScriptElement
+      js.id = id
+      js.src = 'https://connect.facebook.net/en_US/sdk.js'
+      fjs.parentNode?.insertBefore(js, fjs)
+    })(document, 'script', 'facebook-jssdk')
+  }, [])
+
   const login = (token: string, user: User) => {
     setUser(user)
     localStorage.setItem('accessToken', token)
