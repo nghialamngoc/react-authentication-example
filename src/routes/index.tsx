@@ -9,6 +9,7 @@ import Sidebar from '@/components/layout/Sidebar'
 import OneTapLogin from '@/components/layout/OneTapLogin'
 import PrivacyPolicy from '@/pages/PrivacyPolicy'
 import TermsOfUse from '@/pages/TermsOfUse'
+import Home from '@/pages/Home'
 
 export const AppRoutes = () => {
   return (
@@ -24,6 +25,7 @@ export const AppRoutes = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/privary-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-use" element={<TermsOfUse />} />
+                <Route path="/" element={<Home />} />
                 <Route
                   path="/dashboard"
                   element={
@@ -40,7 +42,7 @@ export const AppRoutes = () => {
                     </ProtectedRoute>
                   }
                 />
-                <Route path="*" element={<Navigate to="/login" />} />
+                <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </main>
           </div>
