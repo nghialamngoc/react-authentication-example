@@ -9,6 +9,10 @@ export const googleLogin = async (accessToken: string): Promise<AuthResponse> =>
   return await axios.post(`/auth/google-login`, { accessToken })
 }
 
+export const facebookLogin = async (accessToken: string): Promise<AuthResponse> => {
+  return await axios.post(`/auth/facebook-login`, { accessToken })
+}
+
 export const refreshToken = async (): Promise<AuthResponse> => {
   return await axios.post(`/auth/refresh-token`)
 }

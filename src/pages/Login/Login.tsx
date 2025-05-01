@@ -4,7 +4,7 @@ import { useGoogleLogin } from '@react-oauth/google'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { login, googleLogin } from '@/services/authService'
+import { login, googleLogin, facebookLogin } from '@/services/authService'
 import { useAuth } from '@/hooks/useAuth'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
@@ -95,13 +95,13 @@ export const Login = () => {
 
       console.log('accessToken', accessToken)
 
-      // const response = await facebookLogin(accessToken);
-      // if (response.success) {
-      //   authLogin(response.data.accessToken, response.data.user);
-      //   navigate('/dashboard');
-      // } else {
-      //   setError(response.message || 'Facebook login failed');
-      // }
+      const response = await facebookLogin(accessToken)
+      if (response.success) {
+        authLogin(response.data.accessToken, response.data.user)
+        navigate('/dashboard')
+      } else {
+        setError(response.message || 'Facebook login failed')
+      }
     } catch (err) {
       console.error('Facebook login error:', err)
       setError('Failed to login with Facebook')
