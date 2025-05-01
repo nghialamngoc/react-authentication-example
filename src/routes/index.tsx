@@ -10,6 +10,7 @@ import OneTapLogin from '@/components/layout/OneTapLogin'
 import PrivacyPolicy from '@/pages/PrivacyPolicy'
 import TermsOfUse from '@/pages/TermsOfUse'
 import Home from '@/pages/Home'
+import DataDeletion from '@/pages/DataDeletion'
 
 export const AppRoutes = () => {
   return (
@@ -25,6 +26,7 @@ export const AppRoutes = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-use" element={<TermsOfUse />} />
+                <Route path="/facebook-data-deletion" element={<DataDeletion />} />
                 <Route path="/" element={<Home />} />
                 <Route
                   path="/dashboard"

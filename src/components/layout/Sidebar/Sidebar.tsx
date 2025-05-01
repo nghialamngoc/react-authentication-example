@@ -22,6 +22,10 @@ export const Sidebar = () => {
         <Link to="/terms-of-use" className="block p-2 hover:bg-gray-200 rounded">
           Term Of Use
         </Link>
+
+        <Link to="/facebook-data-deletion" className="block p-2 hover:bg-gray-200 rounded">
+          Facebook Data Deletion
+        </Link>
       </nav>
     </aside>
   )
