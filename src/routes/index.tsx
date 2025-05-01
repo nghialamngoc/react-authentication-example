@@ -23,7 +23,7 @@ export const AppRoutes = () => {
             <main className="flex-1 p-6">
               <Routes>
                 <Route path="/login" element={<Login />} />
-                <Route path="/privary-policy" element={<PrivacyPolicy />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-use" element={<TermsOfUse />} />
                 <Route path="/" element={<Home />} />
                 <Route

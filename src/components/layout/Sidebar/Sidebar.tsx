@@ -16,7 +16,7 @@ export const Sidebar = () => {
           </Link>
         )}
 
-        <Link to="/privary-policy" className="block p-2 hover:bg-gray-200 rounded">
+        <Link to="/privacy-policy" className="block p-2 hover:bg-gray-200 rounded">
           Privacy Policy
         </Link>
         <Link to="/terms-of-use" className="block p-2 hover:bg-gray-200 rounded">
