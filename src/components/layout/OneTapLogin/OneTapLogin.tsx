@@ -51,12 +51,12 @@ export const OneTapLogin = () => {
     }
 
     try {
-      const response = await googleLogin(idToken)
-      if (response.success) {
-        authLogin(response.data.accessToken, response.data.user)
-        navigate('/dashboard')
+      const { success, data, message } = await googleLogin(idToken)
+      if (success && data.accessToken) {
+        authLogin(data.accessToken, data.user)
+        navigate('/')
       } else {
-        setError(response.message || 'Google login failed')
+        setError(message || 'Google login failed')
       }
     } catch (err) {
       console.log('error', err)

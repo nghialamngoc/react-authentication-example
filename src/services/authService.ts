@@ -22,3 +22,19 @@ export const getUser = async (config?: RequestConfig): Promise<Response<User>> =
     ...config,
   })
 }
+
+export const enable2FA = async ({
+  email,
+  otp,
+  tempSecret,
+}: {
+  email: string
+  otp: string
+  tempSecret: string
+}): Promise<AuthResponse> => {
+  return await axios.post(`/auth/enable-2fa`, {
+    email,
+    otp,
+    tempSecret,
+  })
+}

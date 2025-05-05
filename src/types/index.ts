@@ -6,7 +6,11 @@ export interface User {
 }
 
 export type AuthResponse = Response<{
-  accessToken: string
+  tempSecret?: string
+  qrCodeUrl?: string
+  recoveryCodes?: string[]
+  requires2FA?: boolean
+  accessToken?: string
   user: User
 }>
 
