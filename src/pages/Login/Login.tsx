@@ -11,7 +11,6 @@ import * as Yup from 'yup'
 import IconGoogle from '@/components/icons/IconGoogle'
 import IconFB from '@/components/icons/IconFB'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { QRCodeCanvas } from 'qrcode.react'
 
 // Validation schema với Yup
 const LoginSchema = Yup.object().shape({

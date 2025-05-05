@@ -60,7 +60,7 @@ axios.interceptors.response.use(
 
       try {
         const { success, data, message } = await refreshToken()
-        if (success) {
+        if (success && data.accessToken) {
           localStorage.setItem('accessToken', data.accessToken)
           axios.defaults.headers['Authorization'] = `Bearer ${data.accessToken}`
           onRefreshed(data.accessToken)
